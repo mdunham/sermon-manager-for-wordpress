@@ -353,6 +353,7 @@ function wpfc_taxonomy_short_description_shorten( $string, $max_length = 23, $ap
  * @since 2014-01-08
  * Add the number of sermons to the Right Now / At a Glance on the Dashboard
  */
+$wp_version = isset($wp_version) ? $wp_version : '';
 if ( preg_match('/3.(6|7)/', $wp_version) ) {
 	add_action('right_now_content_table_end', 'wpfc_right_now');	
 }

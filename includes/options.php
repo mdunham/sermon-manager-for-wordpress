@@ -8,21 +8,6 @@ add_action('admin_init', 'wpfc_init' );
 add_action('admin_menu', 'wpfc_add_options_page');
 add_filter('plugin_action_links', 'wpfc_plugin_action_links', 10, 2 );
 
-// Define default option settings
-function wpfc_add_defaults() {
-	$tmp = get_option('wpfc_options');
-    if(($tmp['chk_default_options_db']=='1')||(!is_array($tmp))) {
-		delete_option('wpfc_options'); // so we don't have to reset all the 'off' checkboxes too! (don't think this is needed but leave for now)
-		$arr = array(	"bibly" => "0",
-						"bibly_version" => "KJV",
-						"archive_slug" => "sermons",
-						"archive_title" => "Sermons",
-						"common_base_slug" => "0"
-		);
-		update_option('wpfc_options', $arr);
-	}
-}
-
 // Init plugin options to white list our options
 function wpfc_init(){
 	register_setting( 'wpfc_plugin_options', 'wpfc_options', 'wpfc_validate_options' );
@@ -106,7 +91,7 @@ function wpfc_sermon_options_render_form() {
 		.sermon-option-tabs .ui-tabs-nav {margin-top: 0; margin-bottom: 0;}
 		</style>
 		<?php $sermon_settings = get_option('wpfc_options');
-		$sermon_version = $sermon_settings['version'];
+		$sermon_version = isset($sermon_settings['version']) ? $sermon_settings['version'] : '';
 		//echo '<pre>'.$sermon_version.'</pre>';
 		if( $sermon_version < '1.8' ):
 			wpfc_sermon_update();
@@ -237,39 +222,57 @@ function wpfc_sermon_options_render_form() {
 			<div class="postbox tab-content" id="sermon-options-podcast">
 				<h3><span><?php _e('Podcast Settings', 'sermon-manager'); ?></span></h3>
 			<div class="inside">
+			<?php
+				/* set variables from $option */
+				$title = isset($options['title']) ? $options['title'] : '';
+				$description = isset($options['description']) ? $options['description'] : '';
+				$website_link = isset($options['website_link']) ? $options['website_link'] : '';
+				$language = isset($options['language']) ? $options['language'] : '';
+				$copyright = isset($options['copyright']) ? $options['copyright'] : '';
+				$webmaster_name = isset($options['webmaster_name']) ? $options['webmaster_name'] : '';
+				$webmaster_email = isset($options['webmaster_email']) ? $options['webmaster_email'] : '';
+				$itunes_author = isset($options['itunes_author']) ? $options['itunes_author'] : '';
+				$itunes_subtitle = isset($options['itunes_subtitle']) ? $options['itunes_subtitle'] : '';
+				$itunes_summary = isset($options['itunes_summary']) ? $options['itunes_summary'] : '';
+				$itunes_owner_name = isset($options['itunes_owner_name']) ? $options['itunes_owner_name'] : '';
+				$itunes_owner_email = isset($options['itunes_owner_email']) ? $options['itunes_owner_email'] : '';
+				$itunes_cover_image = isset($options['itunes_cover_image']) ? $options['itunes_cover_image'] : '';
+				$itunes_top_category = isset($options['itunes_top_category']) ? $options['itunes_top_category'] : '';
+				$itunes_sub_category = isset($options['itunes_sub_category']) ? $options['itunes_sub_category'] : '';
+			?>
 				<table class="form-table">
 				<tr>
 					<th scope="row"><?php _e( 'Title', 'sermon-manager' ); ?></th>
 					<td class="option" colspan="2">
-						<input id="wpfc_options[title]" type="text" size="65"  name="wpfc_options[title]" placeholder="<?php _e( 'e.g. ' . get_bloginfo('name'), 'sermon-manager' ); ?>" value="<?php esc_attr_e( $options['title'] ); ?>" />
+						<input id="wpfc_options[title]" type="text" size="65"  name="wpfc_options[title]" placeholder="<?php _e( 'e.g. ' . get_bloginfo('name'), 'sermon-manager' ); ?>" value="<?php esc_attr_e( $title ); ?>" />
 					</td>
 				</tr>
 				
 				<tr>
 					<th scope="row"><?php _e( 'Description', 'sermon-manager' ); ?></th>
 					<td class="option" colspan="2">
-						<input id="wpfc_options[description]" type="text" size="65" name="wpfc_options[description]" placeholder="<?php _e( 'e.g. ' . get_bloginfo('description'), 'sermon-manager' ); ?>" value="<?php esc_attr_e( $options['description'] ); ?>" />
+						<input id="wpfc_options[description]" type="text" size="65" name="wpfc_options[description]" placeholder="<?php _e( 'e.g. ' . get_bloginfo('description'), 'sermon-manager' ); ?>" value="<?php esc_attr_e( $description ); ?>" />
 					</td>
 				</tr>
 				
 				<tr>
 					<th scope="row"><?php _e( 'Website Link', 'sermon-manager' ); ?></th>
 					<td class="option" colspan="2">
-						<input id="wpfc_options[website_link]" type="text" size="65" name="wpfc_options[website_link]" placeholder="<?php _e( 'e.g. ' . home_url(), 'sermon-manager' ); ?>" value="<?php esc_attr_e( $options['website_link'] ); ?>" />
+						<input id="wpfc_options[website_link]" type="text" size="65" name="wpfc_options[website_link]" placeholder="<?php _e( 'e.g. ' . home_url(), 'sermon-manager' ); ?>" value="<?php esc_attr_e( $website_link ); ?>" />
 					</td>
 				</tr>
 				
 				<tr>
 					<th scope="row"><?php _e( 'Language', 'sermon-manager' ); ?></th>
 					<td class="option" colspan="2">
-						<input id="wpfc_options[language]" type="text" size="65" name="wpfc_options[language]" placeholder="<?php _e( 'e.g. ' . get_bloginfo('language'), 'sermon-manager' ); ?>" value="<?php esc_attr_e( $options['language'] ); ?>" />
+						<input id="wpfc_options[language]" type="text" size="65" name="wpfc_options[language]" placeholder="<?php _e( 'e.g. ' . get_bloginfo('language'), 'sermon-manager' ); ?>" value="<?php esc_attr_e( $language ); ?>" />
 					</td>
 				</tr>
 				
 				<tr>
 					<th scope="row"><?php _e( 'Copyright', 'sermon-manager' ); ?></th>
 					<td class="option">
-						<input id="wpfc_options[copyright]" type="text" size="65" name="wpfc_options[copyright]" placeholder="<?php _e( 'e.g. Copyright &copy; ' . get_bloginfo('name'), 'sermon-manager' ); ?>" value="<?php esc_attr_e( $options['copyright'] ); ?>" />
+						<input id="wpfc_options[copyright]" type="text" size="65" name="wpfc_options[copyright]" placeholder="<?php _e( 'e.g. Copyright &copy; ' . get_bloginfo('name'), 'sermon-manager' ); ?>" value="<?php esc_attr_e( $copyright ); ?>" />
 					</td>
 					<td class="info">
 						<p><em><?php _e( 'Tip: Use "' . htmlspecialchars('&copy;') . '" to generate a copyright symbol.', 'sermon-manager' ); ?></em></p>
@@ -279,21 +282,21 @@ function wpfc_sermon_options_render_form() {
 				<tr>
 					<th scope="row"><?php _e( 'Webmaster Name', 'sermon-manager' ); ?></th>
 					<td class="option" colspan="2">
-						<input id="wpfc_options[webmaster_name]" type="text" size="65" name="wpfc_options[webmaster_name]" placeholder="<?php _e( 'e.g. Your Name', 'sermon-manager' ); ?>" value="<?php esc_attr_e( $options['webmaster_name'] ); ?>" />
+						<input id="wpfc_options[webmaster_name]" type="text" size="65" name="wpfc_options[webmaster_name]" placeholder="<?php _e( 'e.g. Your Name', 'sermon-manager' ); ?>" value="<?php esc_attr_e( $webmaster_name ); ?>" />
 					</td>
 				</tr>
 				
 				<tr>
 					<th scope="row"><?php _e( 'Webmaster Email', 'sermon-manager' ); ?></th>
 					<td class="option" colspan="2">
-						<input id="wpfc_options[webmaster_email]" type="text" size="65" name="wpfc_options[webmaster_email]" placeholder="<?php _e( 'e.g. ' . get_bloginfo('admin_email'), 'sermon-manager' ); ?>" value="<?php esc_attr_e( $options['webmaster_email'] ); ?>" />
+						<input id="wpfc_options[webmaster_email]" type="text" size="65" name="wpfc_options[webmaster_email]" placeholder="<?php _e( 'e.g. ' . get_bloginfo('admin_email'), 'sermon-manager' ); ?>" value="<?php esc_attr_e( $webmaster_email ); ?>" />
 					</td>
 				</tr>
 				
 				<tr>
 					<th scope="row"><?php _e( 'Author', 'sermon-manager' ); ?></th>
 					<td class="option">
-						<input id="wpfc_options[itunes_author]" type="text" size="65" name="wpfc_options[itunes_author]" placeholder="<?php _e( 'e.g. Primary Speaker or Church Name', 'sermon-manager' ); ?>" value="<?php esc_attr_e( $options['itunes_author'] ); ?>" />
+						<input id="wpfc_options[itunes_author]" type="text" size="65" name="wpfc_options[itunes_author]" placeholder="<?php _e( 'e.g. Primary Speaker or Church Name', 'sermon-manager' ); ?>" value="<?php esc_attr_e( $itunes_author ); ?>" />
 					</td>
 					<td class="info">
 						<p><?php _e( 'This will display at the "Artist" in the iTunes Store.', 'sermon-manager' ); ?></p>
@@ -303,7 +306,7 @@ function wpfc_sermon_options_render_form() {
 				<tr>
 					<th scope="row"><?php _e( 'Subtitle', 'sermon-manager' ); ?></th>
 					<td class="option">
-						<input id="wpfc_options[itunes_subtitle]" type="text" size="65" name="wpfc_options[itunes_subtitle]" placeholder="<?php _e( 'e.g. Preaching and teaching audio from ' . get_bloginfo('name'), 'sermon-manager' ); ?>" value="<?php esc_attr_e( $options['itunes_subtitle'] ); ?>" />
+						<input id="wpfc_options[itunes_subtitle]" type="text" size="65" name="wpfc_options[itunes_subtitle]" placeholder="<?php _e( 'e.g. Preaching and teaching audio from ' . get_bloginfo('name'), 'sermon-manager' ); ?>" value="<?php esc_attr_e( $itunes_subtitle ); ?>" />
 					</td>
 					<td class="info">
 						<p><?php _e( 'Your subtitle should briefly tell the listener what they can expect to hear.', 'sermon-manager' ); ?></p>
@@ -313,7 +316,7 @@ function wpfc_sermon_options_render_form() {
 				<tr>
 					<th scope="row"><?php _e( 'Summary', 'sermon-manager' ); ?></th>
 					<td class="option">
-						<textarea id="wpfc_options[itunes_summary]" class="large-text" cols="65" rows="5" name="wpfc_options[itunes_summary]" placeholder="<?php _e( 'e.g. Weekly teaching audio brought to you by ' . get_bloginfo('name') . ' in City, State.', 'sermon-manager' ); ?>"><?php echo esc_textarea( $options['itunes_summary'] ); ?></textarea>
+						<textarea id="wpfc_options[itunes_summary]" class="large-text" cols="65" rows="5" name="wpfc_options[itunes_summary]" placeholder="<?php _e( 'e.g. Weekly teaching audio brought to you by ' . get_bloginfo('name') . ' in City, State.', 'sermon-manager' ); ?>"><?php echo esc_textarea( $itunes_summary ); ?></textarea>
 					</td>
 					<td class="info">
 						<p><?php _e( 'Keep your Podcast Summary short, sweet and informative. Be sure to include a brief statement about your mission and in what region your audio content originates.', 'sermon-manager' ); ?></p>
@@ -323,7 +326,7 @@ function wpfc_sermon_options_render_form() {
 				<tr>
 					<th scope="row"><?php _e( 'Owner Name', 'sermon-manager' ); ?></th>
 					<td class="option">
-						<input id="wpfc_options[itunes_owner_name]" type="text" size="65" name="wpfc_options[itunes_owner_name]" placeholder="<?php _e( 'e.g. ' . get_bloginfo('name'), 'sermon-manager' ); ?>" value="<?php esc_attr_e( $options['itunes_owner_name'] ); ?>" />
+						<input id="wpfc_options[itunes_owner_name]" type="text" size="65" name="wpfc_options[itunes_owner_name]" placeholder="<?php _e( 'e.g. ' . get_bloginfo('name'), 'sermon-manager' ); ?>" value="<?php esc_attr_e( $itunes_owner_name ); ?>" />
 					</td>
 					<td class="info">
 						<p><?php _e( 'This should typically be the name of your Church.', 'sermon-manager' ); ?></p>
@@ -333,7 +336,7 @@ function wpfc_sermon_options_render_form() {
 				<tr>
 					<th scope="row"><?php _e( 'Owner Email', 'sermon-manager' ); ?></th>
 					<td class="option">
-						<input id="wpfc_options[itunes_owner_email]" type="text" size="65" name="wpfc_options[itunes_owner_email]" placeholder="<?php _e( 'e.g. ' . get_bloginfo('admin_email'), 'sermon-manager' ); ?>" value="<?php esc_attr_e( $options['itunes_owner_email'] ); ?>" />
+						<input id="wpfc_options[itunes_owner_email]" type="text" size="65" name="wpfc_options[itunes_owner_email]" placeholder="<?php _e( 'e.g. ' . get_bloginfo('admin_email'), 'sermon-manager' ); ?>" value="<?php esc_attr_e( $itunes_owner_email ); ?>" />
 					</td>
 					<td class="info">
 						<p><?php _e( 'Use an email address that you don\'t mind being made public. If someone wants to contact you regarding your Podcast this is the address they will use.', 'sermon-manager' ); ?></p>
@@ -343,11 +346,11 @@ function wpfc_sermon_options_render_form() {
 				<tr class="top">
 					<th scope="row"><?php _e( 'Cover Image', 'sermon-manager' ); ?></th>
 					<td class="option">
-						<input id="wpfc_options[itunes_cover_image]" size="45" type="text" name="wpfc_options[itunes_cover_image]" value="<?php esc_attr_e( $options['itunes_cover_image'] ); ?>" />
+						<input id="wpfc_options[itunes_cover_image]" size="45" type="text" name="wpfc_options[itunes_cover_image]" value="<?php esc_attr_e( $itunes_cover_image ); ?>" />
 						<input id="upload_cover_image" type="button" class="button" value="Upload Image" />
-<?php if($options['itunes_cover_image']): ?>
+<?php if($itunes_cover_image): ?>
 						<br />
-						<img src="<?php esc_attr_e( $options['itunes_cover_image'] ); ?>" width="300px" height="300px" class="preview" />
+						<img src="<?php esc_attr_e( $itunes_cover_image ); ?>" width="300px" height="300px" class="preview" />
 <?php endif; ?>
 					</td>
 					<td class="info">
@@ -358,7 +361,7 @@ function wpfc_sermon_options_render_form() {
 				<tr>
 					<th scope="row"><?php _e( 'Top Category', 'sermon-manager' ); ?></th>
 					<td class="option">
-						<input id="wpfc_options[itunes_top_category]" size="65" type="text" name="wpfc_options[itunes_top_category]" placeholder="<?php _e( 'e.g. Religion & Spirituality', 'sermon-manager' ); ?>" value="<?php esc_attr_e( $options['itunes_top_category'] ); ?>" />
+						<input id="wpfc_options[itunes_top_category]" size="65" type="text" name="wpfc_options[itunes_top_category]" placeholder="<?php _e( 'e.g. Religion & Spirituality', 'sermon-manager' ); ?>" value="<?php esc_attr_e( $itunes_top_category ); ?>" />
 					</td>
 					<td class="info">
 						<p><?php _e( 'Choose the appropriate top-level category for your Podcast listing in iTunes.', 'sermon-manager' ); ?></p>
@@ -368,7 +371,7 @@ function wpfc_sermon_options_render_form() {
 				<tr>
 					<th scope="row"><?php _e( 'Sub Category', 'sermon-manager' ); ?></th>
 					<td class="option">
-						<input id="wpfc_options[itunes_sub_category]" size="65" type="text" name="wpfc_options[itunes_sub_category]" placeholder="<?php _e( 'e.g. Christianity', 'sermon-manager' ); ?>" value="<?php esc_attr_e( $options['itunes_sub_category'] ); ?>" />
+						<input id="wpfc_options[itunes_sub_category]" size="65" type="text" name="wpfc_options[itunes_sub_category]" placeholder="<?php _e( 'e.g. Christianity', 'sermon-manager' ); ?>" value="<?php esc_attr_e( $itunes_sub_category ); ?>" />
 					</td>
 					<td class="info">
 						<p><?php _e( 'Choose the appropriate sub category for your Podcast listing in iTunes.', 'sermon-manager' ); ?></p>
