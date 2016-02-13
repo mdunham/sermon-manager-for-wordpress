@@ -26,7 +26,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>' ?>
 <rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
 	<channel>
 	<?php echo $settings['title']; ?>
-		<title><?php echo esc_html( $settings['title'] ) ?> make sure we are here.</title>
+		<title><?php echo esc_html( $settings['title'] ) ?></title>
 		<link><?php echo esc_url( $settings['website_link'] ) ?></link>
 		<atom:link href="<?php if ( !empty($_SERVER['HTTPS']) ) { echo 'https://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI']; } else { echo 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI']; } ?>" rel="self" type="application/rss+xml" />
 		<language><?php echo esc_html( $settings['language'] ) ?></language>
